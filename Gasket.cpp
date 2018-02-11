@@ -3,6 +3,7 @@
 
 #include "Angel.h"
 #include <stdio.h>
+#include "Tetris.h"
 //It is nice to define and use a color pallete on your software. You can put this information on another utility file.
 static vec3 base_colors[] = {
     vec3(1.0, 0.0, 0.0),
@@ -30,6 +31,9 @@ vec2 points1[NumPoints1];
 vec3 colors1[NumPoints1];
 //----------------------------------------------------------------------------
 
+
+
+class
 //grid points and color arrays
 vec2 gridPoints[NumGridPorints];
 vec3 gridColors[NumGridPorints];
@@ -77,7 +81,7 @@ void init(void)
     // set up the color of grid
     for (int i = 0; i < (21 + 11) * 2; i++)
     {
-        gridColors[i] = base_colors[1];
+        gridColors[i] = base_colors[3];
     }
 
     // Vertex positions for three triangles
@@ -183,7 +187,6 @@ void init(void)
 
 void display(void)
 {
-
     // Create and bind a vertex array object
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -234,6 +237,7 @@ void display(void)
 
     //Draw lines using the second vertex array object. On your tetris code, you probabily want to draw the lines first, then the triangles.
     //If you want to change the thickness of the lines, this is how:  glLineWidth(5.0);
+    glLineWidth(5.0f); //GL LineWidth doesn't work                     
     glBindVertexArray(vao1);
     glDrawArrays(GL_LINES, 0, NumGridPorints);
     //Causes all issued commands to be executed as quickly as they are accepted by the actual rendering engine

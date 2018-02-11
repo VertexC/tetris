@@ -1,2 +1,2 @@
-Gasket.cpp: include/InitShader.cpp include/Angel.h include/vec.h \
+Gasket_sample.cpp: include/InitShader.cpp include/Angel.h include/vec.h \
  include/mat.h include/CheckError.h

@@ -17,7 +17,7 @@ INCLUDEDIR=/usr/include/
 LIBDIR=/usr/lib
 
 # If you have more source files add them here 
-SOURCE= Gasket.cpp include/InitShader.cpp
+SOURCE= Gasket_sample.cpp include/InitShader.cpp
 
 # The compiler we are using 
 CC= g++
