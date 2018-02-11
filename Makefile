@@ -17,7 +17,7 @@ INCLUDEDIR=/usr/include/
 LIBDIR=/usr/lib
 
 # If you have more source files add them here 
-SOURCE= Gasket_sample.cpp include/InitShader.cpp
+SOURCE= Tetris.cpp include/InitShader.cpp
 
 # The compiler we are using 
 CC= g++
@@ -28,7 +28,7 @@ CC= g++
 CFLAGS= -O3 -g -Wall -pedantic -DGL_GLEXT_PROTOTYPES
 
 # The name of the final executable 
-EXECUTABLE=Gasket
+EXECUTABLE=Tetris
 
 # The basic library we are using add the other libraries you want to link
 # to your program here 
