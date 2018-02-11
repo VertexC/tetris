@@ -15,5 +15,12 @@ int main(int argc, char ** argv){
     glewInit();
     init();
 
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutSpecialFunc(special);
+    glutKeyboardFunc(keyboard);
+    glutIdleFunc(idle);
+    glutMainLoop();
+    
     return 0;
 }
