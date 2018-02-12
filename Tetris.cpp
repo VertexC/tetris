@@ -6,7 +6,7 @@ using namespace std;
 
 #define GRIDUNITSCALE 50
 #define GRIDROWS 20
-#define GRIDCOLS 20
+#define GRIDCOLS 10
 
 // window size
 int windowWidth = GRIDCOLS * GRIDUNITSCALE;
@@ -58,7 +58,6 @@ vec3 tetrisColors[7] = {
 vec2 gridToWindow(vec2 input)
 {
     vec2 output = vec2(0, 0);
-    // cout << input << endl;
     output.x = -1.0 + (input.x * GRIDUNITSCALE * 1.0 + gridOrigin.x * 1.0) * 1.0 / windowWidth;
     output.y = 1.0 - (input.y * GRIDUNITSCALE * 1.0 + gridOrigin.y * 1.0) * 1.0 / windowHeight;
     return output;
@@ -68,7 +67,6 @@ void updateTerisPosition()
 {
     // update the position
     glBindBuffer(GL_ARRAY_BUFFER, vboIDs[4]);
-    cout << tetris[0] << tetris[1] << tetris[2] << tetris[3] << endl;
     for (int i = 0; i < 4; i++)
     {
         int x = tetrisOriginPosition.x + tetris[i].x;
@@ -77,7 +75,6 @@ void updateTerisPosition()
         vec2 leftdown = gridToWindow(vec2(x, y + 1.0));
         vec2 rightup = gridToWindow(vec2(x + 1.0, y));
         vec2 rightdown = gridToWindow(vec2(x + 1.0, y + 1.0));
-        cout << leftup << " " << leftdown << " " << rightup << " " << rightdown << endl;
         // square with two triangles
         vec2 square[6] = {leftup,
                           leftdown,
@@ -89,7 +86,6 @@ void updateTerisPosition()
     }
     glBindVertexArray(0);
     // glutPostRedisplay();
-    cout << "Tetris updated" << endl;
 }
 /**
  * 
@@ -243,14 +239,17 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // Grid Unit
     glBindVertexArray(vaoIDs[1]);
     glDrawArrays(GL_TRIANGLES, 0, (GRIDCOLS * GRIDROWS) * 6);
 
-    glBindVertexArray(vaoIDs[0]);
-    glDrawArrays(GL_LINES, 0, (GRIDCOLS + GRIDROWS + 2) * 2);
-
+    // Current Tetris
     glBindVertexArray(vaoIDs[2]);
     glDrawArrays(GL_TRIANGLES, 0, 24);
+
+    // Grid line
+    glBindVertexArray(vaoIDs[0]);
+    glDrawArrays(GL_LINES, 0, (GRIDCOLS + GRIDROWS + 2) * 2);
 
     glutSwapBuffers();
 }
@@ -316,11 +315,14 @@ void rotate()
 {
     // update the direction
     rotation = (rotation + 1) % 4;
-    for (int i = 0; i < 4; i++)
+    if (isvalid(tetrisDic[type][rotation][0] + tetrisOriginPosition) && isvalid(tetrisDic[type][rotation][1] + tetrisOriginPosition) && isvalid(tetrisDic[type][rotation][2] + tetrisOriginPosition) && isvalid(tetrisDic[type][rotation][3] + tetrisOriginPosition))
     {
-        tetris[i] = tetrisDic[type][rotation][i];
+        for (int i = 0; i < 4; i++)
+        {
+            tetris[i] = tetrisDic[type][rotation][i];
+        }
+        updateTerisPosition();
     }
-    updateTerisPosition();
 }
 
 /**
@@ -328,11 +330,12 @@ void rotate()
  * */
 void fillTheUnit(vec2 position, vec3 color)
 {
-    for(int i = 0; i < 6; i ++){
-        unitColors[int(position.y * GRIDROWS * sizeof(vec3) * 6 + position.x * sizeof(vec3) * 6 + i)] = color;
+    for (int i = 0; i < 6; i++)
+    {
+        unitColors[int(6 * (position.y + position.x * GRIDROWS) + i)] = color;
     }
-    int offset = position.y * sizeof(vec3) * 6 * GRIDROWS + position.x * sizeof(vec3) * 6;
-    glBindBuffer(GL_ARRAY_BUFFER, vboIDs[3]);    
+    int offset = sizeof(vec3) * 6 * (position.y + position.x * GRIDROWS);
+    glBindBuffer(GL_ARRAY_BUFFER, vboIDs[3]);
     vec3 newColor[6] = {color, color, color, color, color, color};
     glBufferSubData(GL_ARRAY_BUFFER, offset, sizeof(vec3) * 6, newColor);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -345,11 +348,11 @@ void setTetris()
 {
     for (int i = 0; i < 4; i++)
     {
-        int x = tetrisOriginPosition.x + tetris[i].x;
-        int y = tetrisOriginPosition.y + tetris[i].y;
+        vec2 unitPosition = tetrisOriginPosition + tetris[i];
+
         // TODO: check if game over
-        // fillTheUnit(tetrisOriginPosition + tetris[i], tetrisColors[type]);
-        isUnitFill[x][y] = true;
+        fillTheUnit(unitPosition, tetrisColors[type]);
+        isUnitFill[int(unitPosition.x)][int(unitPosition.y)] = true;
     }
 
     // check whether to clean up the row
@@ -426,11 +429,11 @@ void keyboard(unsigned char key, int x, int y)
 void autodown(int value)
 {
     if (!moveTetris(vec2(0, 1)))
-        {
-            // stuck, set the color and new another tetris
-            setTetris();
-            nextTetris();
-        }
+    {
+        // stuck, set the color and new another tetris
+        setTetris();
+        nextTetris();
+    }
     glutTimerFunc(speed, autodown, 0);
 }
 
