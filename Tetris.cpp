@@ -40,8 +40,16 @@ vec2 tetrisDic[1][4][4] = {
 vec2 tetris[4];
 vec2 tetrisOriginPosition = (4, 1);
 int rotation = 0;
-int type = 0; 
+int type = 0;
 float speed = 1000;
+vec3 tetrisColors[7] = {
+    vec3(1.0, 0.0, 0.0),
+    vec3(0.0, 1.0, 0.0),
+    vec3(0.0, 0.0, 1.0),
+    vec3(1.0, 1.0, 0.0),
+    vec3(0.0, 1.0, 1.0),
+    vec3(1.0, 0.0, 1.0),
+    vec3(1.0, 0.5, 0.0)};
 
 /**
  * map the cordinate in grid to Window
@@ -87,9 +95,9 @@ void updateTerisPosition()
  * 
  *
  * */
-void nextTeris()
+void nextTetris()
 {
-    tetrisOriginPosition.x = 2 + random() % (GRIDCOLS - 1 - 2) ;
+    tetrisOriginPosition.x = 2 + random() % (GRIDCOLS - 1 - 2);
     tetrisOriginPosition.y = 1;
     rotation = random() % 4;
     type = 0;
@@ -103,7 +111,7 @@ void nextTeris()
     vec3 tetrisColor[24];
     for (int i = 0; i < 24; i++)
     {
-        tetrisColor[i] = red;
+        tetrisColor[i] = tetrisColors[type];
     }
     glBindBuffer(GL_ARRAY_BUFFER, vboIDs[5]);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(tetrisColor), tetrisColor);
@@ -138,28 +146,28 @@ void init()
 
     // for every unit in the grid
     vec2 unitPoints[6 * GRIDROWS * GRIDCOLS]; // 20 * 10 square, 6 vertex per square
-    // set the color of unit as black
-    for (int i = 0; i < GRIDCOLS * GRIDROWS * 3; i++)
+    // set the color of unit as grey
+    for (int i = 0; i < GRIDCOLS * GRIDROWS * 6; i++)
     {
-        unitColors[i] = black;
+        unitColors[i] = green;
     }
     // set the vertex of unit
-    for (int i = 0; i < GRIDROWS; i++)
+    for (int i = 0; i < GRIDCOLS; i++)
     {
-        for (int j = 0; j < GRIDCOLS; j++)
+        for (int j = 0; j < GRIDROWS; j++)
         {
             vec2 leftup = gridToWindow(vec2(i, j));
             vec2 rightup = gridToWindow(vec2(i + 1, j));
             vec2 leftdown = gridToWindow(vec2(i, j + 1));
             vec2 rightdown = gridToWindow(vec2(i + 1, j + 1));
 
-            unitPoints[6 * (10 * i + j)] = leftup;
-            unitPoints[6 * (10 * i + j) + 1] = leftdown;
-            unitPoints[6 * (10 * i + j) + 2] = rightdown;
+            unitPoints[6 * (GRIDROWS * i + j)] = leftup;
+            unitPoints[6 * (GRIDROWS * i + j) + 1] = leftdown;
+            unitPoints[6 * (GRIDROWS * i + j) + 2] = rightdown;
 
-            unitPoints[6 * (10 * i + j) + 3] = leftup;
-            unitPoints[6 * (10 * i + j) + 4] = rightdown;
-            unitPoints[6 * (10 * i + j) + 5] = rightup;
+            unitPoints[6 * (GRIDROWS * i + j) + 3] = leftup;
+            unitPoints[6 * (GRIDROWS * i + j) + 4] = rightdown;
+            unitPoints[6 * (GRIDROWS * i + j) + 5] = rightup;
         }
     }
     // set isUnitFilled
@@ -179,7 +187,7 @@ void init()
 
     glGenVertexArrays(3, &vaoIDs[0]);
 
-    // Unit
+    // Grid Line
     glBindVertexArray(vaoIDs[0]);
     glGenBuffers(2, vboIDs);
     // Vertex Location
@@ -190,6 +198,20 @@ void init()
     // Vertex Color
     glBindBuffer(GL_ARRAY_BUFFER, vboIDs[1]);
     glBufferData(GL_ARRAY_BUFFER, (GRIDCOLS + GRIDROWS + 2) * 2 * sizeof(vec3), gridColors, GL_STATIC_DRAW);
+    glVertexAttribPointer(vColor, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(vColor);
+
+    // Unit Square
+    glBindVertexArray(vaoIDs[1]);
+    glGenBuffers(2, &vboIDs[2]);
+    // Vertex Location
+    glBindBuffer(GL_ARRAY_BUFFER, vboIDs[2]);
+    glBufferData(GL_ARRAY_BUFFER, (6 * GRIDROWS * GRIDCOLS) * sizeof(vec2), unitPoints, GL_STATIC_DRAW);
+    glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(vPosition);
+    // Veretx Color
+    glBindBuffer(GL_ARRAY_BUFFER, vboIDs[3]);
+    glBufferData(GL_ARRAY_BUFFER, (6 * GRIDROWS * GRIDCOLS) * sizeof(vec3), unitColors, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(vColor, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(vColor);
 
@@ -210,7 +232,7 @@ void init()
     glBindVertexArray(0);
     glClearColor(0, 0, 0, 0);
 
-    nextTeris(); // game begin, show the teris
+    nextTetris(); // game begin, show the teris
 }
 
 /**
@@ -221,11 +243,14 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBindVertexArray(vaoIDs[2]);
-    glDrawArrays(GL_TRIANGLES, 0, 24);
+    glBindVertexArray(vaoIDs[1]);
+    glDrawArrays(GL_TRIANGLES, 0, (GRIDCOLS * GRIDROWS) * 6);
 
     glBindVertexArray(vaoIDs[0]);
     glDrawArrays(GL_LINES, 0, (GRIDCOLS + GRIDROWS + 2) * 2);
+
+    glBindVertexArray(vaoIDs[2]);
+    glDrawArrays(GL_TRIANGLES, 0, 24);
 
     glutSwapBuffers();
 }
@@ -262,7 +287,7 @@ bool isvalid(vec2 position)
 /**
  * move the tetris
  * */
-void moveTetris(vec2 movement)
+bool moveTetris(vec2 movement)
 {
     // set the new position in the grid
     vec2 newOriginPosition = tetrisOriginPosition + movement;
@@ -273,6 +298,7 @@ void moveTetris(vec2 movement)
         if (!isvalid(newOriginPosition + tetris[i]))
         {
             valid = false;
+            return false;
         }
     }
     if (valid)
@@ -280,18 +306,53 @@ void moveTetris(vec2 movement)
         // update the tetris position in the grid
         tetrisOriginPosition += movement;
         updateTerisPosition();
+        return true;
     }
 }
 /**
  * roate the tetris
  * */
-void rotate(){
+void rotate()
+{
     // update the direction
     rotation = (rotation + 1) % 4;
-    for (int i = 0; i < 4; i++){
+    for (int i = 0; i < 4; i++)
+    {
         tetris[i] = tetrisDic[type][rotation][i];
     }
     updateTerisPosition();
+}
+
+/**
+ * update the color in the unit
+ * */
+void fillTheUnit(vec2 position, vec3 color)
+{
+    for(int i = 0; i < 6; i ++){
+        unitColors[int(position.y * GRIDROWS * sizeof(vec3) * 6 + position.x * sizeof(vec3) * 6 + i)] = color;
+    }
+    int offset = position.y * sizeof(vec3) * 6 * GRIDROWS + position.x * sizeof(vec3) * 6;
+    glBindBuffer(GL_ARRAY_BUFFER, vboIDs[3]);    
+    vec3 newColor[6] = {color, color, color, color, color, color};
+    glBufferSubData(GL_ARRAY_BUFFER, offset, sizeof(vec3) * 6, newColor);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+/**
+ * set the color of tetris on the unit
+ * */
+void setTetris()
+{
+    for (int i = 0; i < 4; i++)
+    {
+        int x = tetrisOriginPosition.x + tetris[i].x;
+        int y = tetrisOriginPosition.y + tetris[i].y;
+        // TODO: check if game over
+        // fillTheUnit(tetrisOriginPosition + tetris[i], tetrisColors[type]);
+        isUnitFill[x][y] = true;
+    }
+
+    // check whether to clean up the row
 }
 
 /** 
@@ -307,14 +368,19 @@ void special(int key, int x, int y)
         break;
     case GLUT_KEY_DOWN:
         // move down the tetris
-        moveTetris(vec2(0, 1));
+        if (!moveTetris(vec2(0, 1)))
+        {
+            // stuck, set the color and new another tetris
+            setTetris();
+            nextTetris();
+        }
         break;
     case GLUT_KEY_LEFT:
-        moveTetris(vec2(-1, 0));    
+        moveTetris(vec2(-1, 0));
         // move left the tetris
         break;
     case GLUT_KEY_RIGHT:
-        moveTetris(vec2(1,0));
+        moveTetris(vec2(1, 0));
         // move right the tetris
         break;
     }
@@ -357,9 +423,14 @@ void keyboard(unsigned char key, int x, int y)
  *  
  * 
  * */
-void autodown(int value){
-    moveTetris(vec2(0,1));
-
+void autodown(int value)
+{
+    if (!moveTetris(vec2(0, 1)))
+        {
+            // stuck, set the color and new another tetris
+            setTetris();
+            nextTetris();
+        }
     glutTimerFunc(speed, autodown, 0);
 }
 
