@@ -39,6 +39,9 @@ vec2 tetrisDic[1][4][4] = {
 // the teris moves on the screen, just one
 vec2 tetris[4];
 vec2 tetrisOriginPosition = (4, 1);
+int rotation = 0;
+int type = 0; 
+float speed = 1000;
 
 /**
  * map the cordinate in grid to Window
@@ -88,11 +91,12 @@ void nextTeris()
 {
     tetrisOriginPosition.x = 2 + random() % (GRIDCOLS - 1 - 2) ;
     tetrisOriginPosition.y = 1;
-    int rotation = 0;
+    rotation = random() % 4;
+    type = 0;
     //initialize the vertex position
     for (int i = 0; i < 4; i++)
     {
-        tetris[i] = tetrisDic[0][rotation][i];
+        tetris[i] = tetrisDic[type][rotation][i];
     }
     updateTerisPosition();
     // set color, 4 square, 6 vertex each
@@ -262,7 +266,6 @@ void moveTetris(vec2 movement)
 {
     // set the new position in the grid
     vec2 newOriginPosition = tetrisOriginPosition + movement;
-    cout << newOriginPosition << endl;
     bool valid = true;
     for (int i = 0; i < 4; i++)
     {
@@ -275,10 +278,20 @@ void moveTetris(vec2 movement)
     if (valid)
     {
         // update the tetris position in the grid
-        printf("move the tetris down!\n");
         tetrisOriginPosition += movement;
         updateTerisPosition();
     }
+}
+/**
+ * roate the tetris
+ * */
+void rotate(){
+    // update the direction
+    rotation = (rotation + 1) % 4;
+    for (int i = 0; i < 4; i++){
+        tetris[i] = tetrisDic[type][rotation][i];
+    }
+    updateTerisPosition();
 }
 
 /** 
@@ -290,16 +303,18 @@ void special(int key, int x, int y)
     {
     case GLUT_KEY_UP:
         // rotate the tetris
+        rotate();
         break;
     case GLUT_KEY_DOWN:
         // move down the tetris
-        printf("press the down\n");
         moveTetris(vec2(0, 1));
         break;
     case GLUT_KEY_LEFT:
+        moveTetris(vec2(-1, 0));    
         // move left the tetris
         break;
     case GLUT_KEY_RIGHT:
+        moveTetris(vec2(1,0));
         // move right the tetris
         break;
     }
@@ -342,6 +357,16 @@ void keyboard(unsigned char key, int x, int y)
  *  
  * 
  * */
+void autodown(int value){
+    moveTetris(vec2(0,1));
+
+    glutTimerFunc(speed, autodown, 0);
+}
+
+/*
+ *  
+ * 
+ * */
 void idle(void)
 {
     glutPostRedisplay();
@@ -360,6 +385,9 @@ int main(int argc, char **argv)
     init();
 
     glutDisplayFunc(display);
+
+    glutTimerFunc(speed, autodown, 0);
+
     glutReshapeFunc(reshape);
     glutSpecialFunc(special);
     glutKeyboardFunc(keyboard);
