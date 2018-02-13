@@ -378,6 +378,23 @@ void checkRowFull(int y)
         }
     }
 }
+/**
+ * 
+ * restart the game
+ * */
+void restart()
+{
+    // clean up the unit color
+    for (int x = 0; x < GRIDCOLS; x++)
+    {
+        for (int y = 0; y < GRIDROWS; y++)
+        {
+            isUnitFill[x][y] = false;
+            fillTheUnit(vec2(x,y), green);
+        }
+    }
+    nextTetris();
+}
 
 /**
  * set the color of tetris on the unit
@@ -389,7 +406,8 @@ void setTetris()
         vec2 unitPosition = tetrisOriginPosition + tetris[i];
 
         //check if game over
-        if(!isvalid(unitPosition)){
+        if (!isvalid(unitPosition))
+        {
             restart();
             return;
         }
@@ -435,15 +453,7 @@ void special(int key, int x, int y)
     }
 }
 
-/**
- * 
- * restart the game
- * */
-void restart()
-{
-    // clean up the unit color
 
-}
 
 /**
  * q: quit
