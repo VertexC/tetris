@@ -344,18 +344,64 @@ void fillTheUnit(vec2 position, vec3 color)
 /**
  * set the color of tetris on the unit
  * */
+void checkRowFull(int y)
+{
+    bool isFull = true;
+    for (int x = 0; x < GRIDCOLS; x++)
+    {
+        if (!isUnitFill[x][y])
+        {
+            isFull = false;
+        }
+    }
+    if (isFull)
+    {
+        // clean up the row
+        for (int j = y; j >= 0; j--)
+        {
+            if (j == 0)
+            {
+                for (int x = 0; x < GRIDCOLS; x++)
+                {
+                    fillTheUnit(vec2(x, j), green);
+                    isUnitFill[x][j] = false;
+                }
+            }
+            else
+            {
+                for (int x = 0; x < GRIDCOLS; x++)
+                {
+                    fillTheUnit(vec2(x, j), unitColors[6 * (GRIDROWS * x + (j - 1))]);
+                    isUnitFill[x][j] = isUnitFill[x][j - 1];
+                }
+            }
+        }
+    }
+}
+
+/**
+ * set the color of tetris on the unit
+ * */
 void setTetris()
 {
     for (int i = 0; i < 4; i++)
     {
         vec2 unitPosition = tetrisOriginPosition + tetris[i];
 
-        // TODO: check if game over
+        //check if game over
+        if(!isvalid(unitPosition)){
+            restart();
+            return;
+        }
         fillTheUnit(unitPosition, tetrisColors[type]);
         isUnitFill[int(unitPosition.x)][int(unitPosition.y)] = true;
     }
 
-    // check whether to clean up the row
+    // check whether to clean up the row, from the top to bottom
+    for (int y = 0; y < GRIDROWS; y++)
+    {
+        checkRowFull(y);
+    }
 }
 
 /** 
@@ -395,13 +441,8 @@ void special(int key, int x, int y)
  * */
 void restart()
 {
-    for (int i = 0; i < GRIDROWS; i++)
-    {
-        for (int j = 0; j < GRIDCOLS; j++)
-        {
-            // update the color of each unit
-        }
-    }
+    // clean up the unit color
+
 }
 
 /**
