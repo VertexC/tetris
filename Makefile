@@ -47,6 +47,9 @@ OBJECT= $(SOURCE:.cpp=.o)
 all: $(OBJECT) depend
 	$(CC) $(CFLAGS) $(INCLUDEFLAG) $(LIBFLAG) $(OBJECT) -o $(EXECUTABLE) $(LDFLAGS) 
 
+tetris: $(OBJECT) depend
+	$(CC) $(CFLAGS) $(INCLUDEFLAG) $(LIBFLAG) $(OBJECT) -o $(EXECUTABLE) $(LDFLAGS)
+
 depend:
 	$(CC) -MM -MT $(SOURCE) > depend
 
