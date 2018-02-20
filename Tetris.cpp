@@ -22,12 +22,7 @@ vec3 unitColors[6 * GRIDROWS * GRIDCOLS];
 bool isUnitFill[GRIDCOLS][GRIDROWS];
 
 // colors
-vec3 red = vec3(1.0, 0.0, 0.0);
-vec3 green = vec3(0.0, 1.0, 0.0);
-vec3 blue = vec3(0.0, 0.0, 1.0);
-vec3 white = vec3(1.0, 1.0, 1.0);
-vec3 black = vec3(0.0, 0.0, 0.0);
-vec3 grey = vec3(0.9, 0.9, 0.9);
+vec3 gridColor = vec3(0.9, 0.9, 0.9);
 vec3 backgroundColor = vec3(163.0 / 255.0, 158.0 / 255, 161.0 / 255);
 
 // Tetris
@@ -168,12 +163,12 @@ void init()
     // set color of line
     for (int i = 0; i < (GRIDCOLS + GRIDROWS + 2) * 2; i++)
     {
-        gridColors[i] = grey;
+        gridColors[i] = gridColor;
     }
 
     // for every unit in the grid
     vec2 unitPoints[6 * GRIDROWS * GRIDCOLS]; // 20 * 10 square, 6 vertex per square
-    // set the color of unit as grey
+    // set the color of unit
     for (int i = 0; i < GRIDCOLS * GRIDROWS * 6; i++)
     {
         unitColors[i] = backgroundColor;
