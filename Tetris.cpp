@@ -4,13 +4,13 @@
 #include <stdlib.h>
 using namespace std;
 
-#define GRIDUNITSCALE 50
+#define GRIDUNITSCALE 30
 #define GRIDROWS 20
 #define GRIDCOLS 10
 
 // window size
-int windowWidth = GRIDCOLS * GRIDUNITSCALE;
-int windowHeight = GRIDROWS * GRIDUNITSCALE;
+int windowWidth = (GRIDCOLS + 10) * GRIDUNITSCALE;
+int windowHeight = (GRIDROWS) * GRIDUNITSCALE;
 
 // for vertex array and buffer
 GLuint vaoIDs[3];
@@ -85,8 +85,8 @@ vec3 tetrisColors[7];
 vec2 gridToWindow(vec2 input)
 {
     vec2 output = vec2(0, 0);
-    output.x = -1.0 + (input.x * GRIDUNITSCALE * 1.0 + gridOrigin.x * 1.0) * 1.0 / windowWidth;
-    output.y = 1.0 - (input.y * GRIDUNITSCALE * 1.0 + gridOrigin.y * 1.0) * 1.0 / windowHeight;
+    output.x = -1.0 + (input.x * GRIDUNITSCALE * 1.0 + gridOrigin.x * 1.0) * 2.0 / windowWidth;
+    output.y = 1.0 - (input.y * GRIDUNITSCALE * 1.0 + gridOrigin.y * 1.0) * 2.0 / windowHeight;
     return output;
 }
 
@@ -290,9 +290,7 @@ void display()
  * */
 void reshape(GLsizei w, GLsizei h)
 {
-    windowWidth = w;
-    windowHeight = h;
-    glViewport(0, 0, w, h);
+    glutReshapeWindow(windowWidth, windowHeight);
 }
 
 /**
@@ -532,7 +530,7 @@ int main(int argc, char **argv)
     glutInitContextVersion(3, 3);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
     glutInitWindowSize(windowWidth, windowHeight);
-    glutInitWindowPosition(500, 500);
+    glutInitWindowPosition(300, 300);
     glutCreateWindow("Tetris");
     glewExperimental = GL_TRUE;
     glewInit();
