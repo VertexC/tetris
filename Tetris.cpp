@@ -28,7 +28,7 @@ vec3 blue = vec3(0.0, 0.0, 1.0);
 vec3 white = vec3(1.0, 1.0, 1.0);
 vec3 black = vec3(0.0, 0.0, 0.0);
 vec3 grey = vec3(0.9, 0.9, 0.9);
-vec3 backgroundColor = vec3(127.0 / 255.0, 114.0 / 255, 114.0 / 255);
+vec3 backgroundColor = vec3(163.0 / 255.0, 158.0 / 255, 161.0 / 255);
 
 // Tetris
 // Record of all tetris and its rotations
@@ -45,10 +45,10 @@ vec2 tetrisDic[7][4][4] = {
      {vec2(0, 0), vec2(0, 1), vec2(0, -1), vec2(1, 0)},
      {vec2(0, 0), vec2(1, 0), vec2(-1, 0), vec2(0, 1)},
      {vec2(0, 0), vec2(0, -1), vec2(0, 1), vec2(-1, 0)}},
-    {{vec2{0, 0}, vec2(0, -1), vec2(-1, 0), vec2(-1, -1)}, // "O"
-     {vec2{0, 0}, vec2(0, -1), vec2(-1, 0), vec2(-1, -1)},
-     {vec2{0, 0}, vec2(0, -1), vec2(-1, 0), vec2(-1, -1)},
-     {vec2{0, 0}, vec2(0, -1), vec2(-1, 0), vec2(-1, -1)}},
+    {{vec2(0,0), vec2(0, -1), vec2(-1, 0), vec2(-1, -1)}, // "O"
+     {vec2(0,0), vec2(0, -1), vec2(-1, 0), vec2(-1, -1)},
+     {vec2(0,0), vec2(0, -1), vec2(-1, 0), vec2(-1, -1)},
+     {vec2(0,0), vec2(0, -1), vec2(-1, 0), vec2(-1, -1)}},
     {{vec2(0, 0), vec2(-1, 0), vec2(-2, 0), vec2(1, 0)}, // "I"
      {vec2(0, 0), vec2(0, 1), vec2(0, -1), vec2(0, -2)},
      {vec2(0, 0), vec2(-1, 0), vec2(-2, 0), vec2(1, 0)},
@@ -60,22 +60,23 @@ vec2 tetrisDic[7][4][4] = {
     {{vec2(0, 0), vec2(-1, 0), vec2(0, -1), vec2(1, -1)}, // "Z"
      {vec2(0, 0), vec2(0, -1), vec2(1, 0), vec2(1, 1)},
      {vec2(0, 0), vec2(-1, 0), vec2(0, -1), vec2(1, -1)},
-     {vec2(0, 0), vec2(0, -1), vec2(1, 0), vec2(1, 1)}}
-};
+     {vec2(0, 0), vec2(0, -1), vec2(1, 0), vec2(1, 1)}}};
 // the teris moves on the screen, just one
 vec2 tetris[4];
 vec2 tetrisOriginPosition = (4, 1);
 int rotation = 0;
 int type = 0;
 float speed = 1000;
-vec3 tetrisColors[7] = {
-    vec3(1.0, 0.0, 0.0),
-    vec3(0.0, 1.0, 0.0),
-    vec3(0.0, 0.0, 1.0),
-    vec3(1.0, 1.0, 0.0),
-    vec3(0.0, 1.0, 1.0),
-    vec3(1.0, 0.0, 1.0),
-    vec3(1.0, 0.5, 0.0)};
+vec3 colorBar[7] = {
+    vec3(165, 62, 36),
+    vec3(170, 116, 44),
+    vec3(170, 162, 44),
+    vec3(132, 170, 44),
+    vec3(44, 158, 146),
+    vec3(39, 77, 142),
+    vec3(142, 39, 117)};
+
+vec3 tetrisColors[7];
 
 /**
  * map the cordinate in grid to Window
@@ -122,7 +123,7 @@ void nextTetris()
     tetrisOriginPosition.x = 2 + random() % (GRIDCOLS - 1 - 2);
     tetrisOriginPosition.y = 1;
     rotation = random() % 4;
-    type = random() % 7;    
+    type = random() % 7;
     //initialize the vertex position
     for (int i = 0; i < 4; i++)
     {
@@ -144,6 +145,10 @@ void nextTetris()
 
 void init()
 {
+    // fill the tetris color
+    for(int i =0; i < 7; i++){
+        tetrisColors[i] = colorBar[i] * 1.0 / 225.0;
+    }
     // to draw the line of the grid, 21 row, 11 col, 64 vertex, every color for one vertex
     vec2 gridPoints[(GRIDCOLS + GRIDROWS + 2) * 2];
     vec3 gridColors[(GRIDCOLS + GRIDROWS + 2) * 2];
