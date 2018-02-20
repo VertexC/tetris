@@ -28,14 +28,40 @@ vec3 blue = vec3(0.0, 0.0, 1.0);
 vec3 white = vec3(1.0, 1.0, 1.0);
 vec3 black = vec3(0.0, 0.0, 0.0);
 vec3 grey = vec3(0.9, 0.9, 0.9);
+vec3 backgroundColor = vec3(127.0 / 255.0, 114.0 / 255, 114.0 / 255);
 
 // Tetris
 // Record of all tetris and its rotations
-vec2 tetrisDic[1][4][4] = {
+vec2 tetrisDic[7][4][4] = {
     {{vec2(0, 0), vec2(-1, 0), vec2(1, 0), vec2(-1, -1)}, // "L"
      {vec2(0, 0), vec2(0, 1), vec2(0, -1), vec2(1, -1)},
      {vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(-1, 0)},
-     {vec2(0, 0), vec2(0, 1), vec2(-1, 1), vec2(0, -1)}}};
+     {vec2(0, 0), vec2(0, 1), vec2(-1, 1), vec2(0, -1)}},
+    {{vec2(0, 0), vec2(-1, 0), vec2(1, -1), vec2(1, 0)}, // "J"
+     {vec2(0, 0), vec2(0, -1), vec2(0, 1), vec2(1, 1)},
+     {vec2(0, 0), vec2(-1, 0), vec2(-1, 1), vec2(1, 0)},
+     {vec2(0, 0), vec2(0, 1), vec2(0, -1), vec2(-1, -1)}},
+    {{vec2(0, 0), vec2(0, -1), vec2(-1, 0), vec2(1, 0)}, // "T"
+     {vec2(0, 0), vec2(0, 1), vec2(0, -1), vec2(1, 0)},
+     {vec2(0, 0), vec2(1, 0), vec2(-1, 0), vec2(0, 1)},
+     {vec2(0, 0), vec2(0, -1), vec2(0, 1), vec2(-1, 0)}},
+    {{vec2{0, 0}, vec2(0, -1), vec2(-1, 0), vec2(-1, -1)}, // "O"
+     {vec2{0, 0}, vec2(0, -1), vec2(-1, 0), vec2(-1, -1)},
+     {vec2{0, 0}, vec2(0, -1), vec2(-1, 0), vec2(-1, -1)},
+     {vec2{0, 0}, vec2(0, -1), vec2(-1, 0), vec2(-1, -1)}},
+    {{vec2(0, 0), vec2(-1, 0), vec2(-2, 0), vec2(1, 0)}, // "I"
+     {vec2(0, 0), vec2(0, 1), vec2(0, -1), vec2(0, -2)},
+     {vec2(0, 0), vec2(-1, 0), vec2(-2, 0), vec2(1, 0)},
+     {vec2(0, 0), vec2(0, 1), vec2(0, -1), vec2(0, -2)}},
+    {{vec2(0, 0), vec2(1, 0), vec2(0, -1), vec2(-1, -1)}, // "S"
+     {vec2(0, 0), vec2(0, -1), vec2(1, 0), vec2(1, 1)},
+     {vec2(0, 0), vec2(1, 0), vec2(0, -1), vec2(-1, -1)},
+     {vec2(0, 0), vec2(0, -1), vec2(1, 0), vec2(1, 1)}},
+    {{vec2(0, 0), vec2(-1, 0), vec2(0, -1), vec2(1, -1)}, // "Z"
+     {vec2(0, 0), vec2(0, -1), vec2(1, 0), vec2(1, 1)},
+     {vec2(0, 0), vec2(-1, 0), vec2(0, -1), vec2(1, -1)},
+     {vec2(0, 0), vec2(0, -1), vec2(1, 0), vec2(1, 1)}}
+};
 // the teris moves on the screen, just one
 vec2 tetris[4];
 vec2 tetrisOriginPosition = (4, 1);
@@ -96,7 +122,7 @@ void nextTetris()
     tetrisOriginPosition.x = 2 + random() % (GRIDCOLS - 1 - 2);
     tetrisOriginPosition.y = 1;
     rotation = random() % 4;
-    type = 0;
+    type = random() % 7;    
     //initialize the vertex position
     for (int i = 0; i < 4; i++)
     {
@@ -145,7 +171,7 @@ void init()
     // set the color of unit as grey
     for (int i = 0; i < GRIDCOLS * GRIDROWS * 6; i++)
     {
-        unitColors[i] = green;
+        unitColors[i] = backgroundColor;
     }
     // set the vertex of unit
     for (int i = 0; i < GRIDCOLS; i++)
@@ -363,7 +389,7 @@ void checkRowFull(int y)
             {
                 for (int x = 0; x < GRIDCOLS; x++)
                 {
-                    fillTheUnit(vec2(x, j), green);
+                    fillTheUnit(vec2(x, j), backgroundColor);
                     isUnitFill[x][j] = false;
                 }
             }
@@ -390,7 +416,7 @@ void restart()
         for (int y = 0; y < GRIDROWS; y++)
         {
             isUnitFill[x][y] = false;
-            fillTheUnit(vec2(x,y), green);
+            fillTheUnit(vec2(x, y), backgroundColor);
         }
     }
     nextTetris();
@@ -452,8 +478,6 @@ void special(int key, int x, int y)
         break;
     }
 }
-
-
 
 /**
  * q: quit
