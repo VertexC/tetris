@@ -9,7 +9,7 @@ using namespace std;
 #define GRIDCOLS 10
 
 // window size
-int windowWidth = (GRIDCOLS + 10) * GRIDUNITSCALE;
+int windowWidth = (GRIDCOLS) * GRIDUNITSCALE;
 int windowHeight = (GRIDROWS) * GRIDUNITSCALE;
 
 // for vertex array and buffer
