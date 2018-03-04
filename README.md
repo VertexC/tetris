@@ -2,7 +2,7 @@
 
 Linux OpengGL Glut
 
-<img src=".\image\tetris.png" width="200">
+<img src=".\img\tetris.png" width="200">
 
 ## Key board control
 - left/right key: move tetris left/right
