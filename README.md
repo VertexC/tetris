@@ -2,7 +2,7 @@
 
 Linux OpengGL Glut
 
-## key board control
+## Key board control
 - left/right key: move tetris left/right
 - up key: change rotation
 - down key: speed up the falling
