@@ -1,8 +1,16 @@
-## All steps done as required, no other features implemented
+## A Tetris game build on OpenGL
+
+Linux OpengGL Glut
+
+<img src=".\image\tetris.png" width="200">
+
+## Key board control
+- left/right key: move tetris left/right
+- up key: change rotation
+- down key: speed up the falling
+
 
 ## To generate executable file
 ```bash
-    make tetris
-    // or
     make 
 ```
